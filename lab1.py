@@ -1,5 +1,6 @@
 import csv
 
+# значения в соотвествии с вариантом
 CLIENT = '915642913'
 FREE_MSG_COUNT = 5
 FREE_IN_CALL_DUR = 0
@@ -11,6 +12,11 @@ PATH = 'data.csv'
 
 
 def read_csv_to_list_of_dict(filename):
+    '''
+    функция-парсер csv файла.
+    :param filename: string
+    :return: { column_name: [value1, value2, ...], key2: [...], ...}
+    '''
     with open(filename) as file:
         reader = list(csv.reader(file))
         dict_keys = [key for key in reader[0]]
@@ -36,6 +42,18 @@ def calculate(
         free_out_call_dur,
         free_msg_count
 ):
+    '''
+    функция расчитывающая цену по тарифу
+    :param dict_from_CDR: dict - словарь полученный вызовом метода read_csv_to_list_of_dict
+    :param client: string - номер клиента
+    :param k_in_call: int - коэффициент для входящих звонков
+    :param k_out_call: int - коэффициент для исходящих звонков
+    :param k_msg: int - коэффициент для сообщений
+    :param free_in_call_dur: int - количество бесплатных входящих минут
+    :param free_out_call_dur: int - количество бесплатных исходящих минут
+    :param free_msg_count: int - количество бесплатных СМС
+    :return: float - расчитанная цена
+    '''
     out_call_dur = float(dict_from_CDR['call_duration'][dict_from_CDR['msisdn_origin'].index(client)])
     if out_call_dur <= free_out_call_dur:
         out_call_price = 0
@@ -67,4 +85,4 @@ price = calculate(
     free_in_call_dur=FREE_IN_CALL_DUR,
     free_out_call_dur=FREE_OUT_CALL_DUR,
     free_msg_count=FREE_MSG_COUNT)
-print('Цена для абонента:',  price)
+print('Цена для абонента:',  price, 'рублей')
